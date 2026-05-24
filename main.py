@@ -146,9 +146,19 @@ def main():
     clean_configs = [cfg for cfg in unique_configs if cfg is not None]
 
     if clean_configs:
+        # Укажи здесь то название подписки, которое должны увидеть пользователи
+        subscription_name = "t.me/webfreedomvpn"
+        
+        # Формируем технический комментарий для приложения
+        # Некоторые клиенты читают имя из первой строки, если она оформлена как специальный комментарий
+        header_comment = f"//profile-title: {subscription_name}"
+        
+        # Собираем всё вместе: сначала имя подписки, потом сами сервера
+        final_output = [header_comment] + sorted(clean_configs)
+        
         with open(output_file, "w", encoding="utf-8") as f:
-            f.write("\n".join(sorted(clean_configs)))
-        print(f"💾 Файл '{output_file}' успешно сохранен и готов к раздаче.")
+            f.write("\n".join(final_output))
+        print(f"💾 Файл '{output_file}' успешно сохранен с именем подписки '{subscription_name}'.")
     else:
         print("⚠️ Валидные конфигурации не найдены.")
 

@@ -8,15 +8,20 @@ on:
   # Кнопка для ручного запуска парсера из браузера
   workflow_dispatch:
 
+# Принудительно заставляем среду выполнения использовать Node.js 24, убирая предупреждения депрекации
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
 jobs:
   build-and-run:
     runs-on: ubuntu-latest
 
     steps:
+    # Обновлено до актуальной версии v4
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # ИСПРАВЛЕНО: Убрано лишнее "actions-" из названия экшена
+    # Обновлено до актуальной версии v5
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
@@ -31,10 +36,11 @@ jobs:
       run: |
         python main.py
 
+    # Обновлено до актуальной версии v3
     - name: Upload artifact for Pages
       uses: actions/upload-pages-artifact@v3
       with:
-        path: '.' # Выгружаем всю рабочую директорию, где лежит 'webfreedom_test_output.txt'
+        path: '.'
 
   deploy-pages:
     needs: build-and-run
@@ -46,6 +52,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+    # Обновлено до актуальной версии v4
     - name: Deploy to GitHub Pages
       id: deployment
       uses: actions/deploy-pages@v4

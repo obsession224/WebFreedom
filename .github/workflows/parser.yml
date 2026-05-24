@@ -1,0 +1,49 @@
+name: WebFreedom Auto Parser
+
+on:
+  schedule:
+    # Запуск в 06:15 и 18:15 по UTC (по МСК это 09:15 и 21:15 ежедневно)
+    - cron: '15 6,18 * * *'
+  
+  # Кнопка для ручного запуска парсера из браузера
+  workflow_dispatch:
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/actions-setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        pip install requests
+
+    - name: Run main.py script
+      run: |
+        python main.py
+
+    - name: Upload artifact for Pages
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: '.' # Выгружаем всю рабочую директорию, где лежит 'webfreedom_test_output.txt'
+
+  deploy-pages:
+    needs: build-and-run
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4

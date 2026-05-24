@@ -1,98 +1,48 @@
 import requests
-from urllib.parse import urlparse, parse_qs, urlencode, urlunparse, quote
+from urllib.parse import quote
 
-# Источники подписок
-SOURCES = [
-    "https://sub.harknmav.fun/mendc2yGo4ELy19a"
-]
-
+SOURCES = ["https://sub.harknmav.fun/mendc2yGo4ELy19a"]
 OUTPUT_FILE = "webfreedom_rg_only.txt"
-NEW_NAME = "Tg only t.me/webfreedomvpn"  # Исправлено: теперь такое же как в рабочем коде
+NEW_NAME = "t.me/webfreedomvpn"
 
-# Дополнительные настройки из рабочего кода
-HEADER_COMMENT = "//profile-title: t.me/webfreedomvpn"
-
-def process_config_line(line, new_name):
-    """Обрабатывает строку конфига, меняет название"""
+def process_line(line):
     line = line.strip()
-    
     if not line.startswith("vless://"):
         return None
-    
-    # Меняем название после #
-    if "#" in line:
-        base = line.split("#")[0]
-    else:
-        base = line
-    
-    # Проверяем, нужно ли переименовывать (как в рабочем коде)
-    original_name = ""
-    if "#" in line:
-        original_name = line.split("#")[1]
-    
-    # Если есть кириллица или @ - переименовываем
-    import re
-    cyrillic_pattern = re.compile(r"[а-яА-ЯёЁ]")
-    
-    need_rename = (
-        "@" in original_name or
-        cyrillic_pattern.search(original_name) or
-        "бот" in original_name.lower() or
-        "fastcon" in original_name.lower() or
-        "безлимит" in original_name.lower()
-    )
-    
-    if need_rename or new_name:
-        final_name = new_name
-    else:
-        final_name = original_name
-    
-    new_line = f"{base}#{quote(final_name)}"
-    return new_line
+    base = line.split("#")[0] if "#" in line else line
+    return f"{base}#{quote(NEW_NAME)}"
 
-configs = []
-total_parsed = 0
-
+all_configs = []
 for url in SOURCES:
     try:
-        text = requests.get(url, timeout=20).text
-        
-        # Проверяем, не закодирован ли ответ в base64 (как в рабочем коде)
-        if not text.startswith("vless://"):
+        resp = requests.get(url, timeout=20)
+        raw = resp.text
+        # Декодируем Base64, если нужно
+        if not raw.startswith("vless://"):
+            import base64
             try:
-                import base64
-                missing_padding = len(text) % 4
-                if missing_padding:
-                    text += '=' * (4 - missing_padding)
-                decoded = base64.b64decode(text).decode("utf-8", errors="ignore")
-                if decoded.startswith("vless://"):
-                    text = decoded
+                raw = base64.b64decode(raw).decode()
             except:
                 pass
-        
-        for line in text.splitlines():
-            line = line.strip()
-            if not line.startswith("vless://"):
-                continue
-            
-            total_parsed += 1
-            processed = process_config_line(line, NEW_NAME)
-            if processed:
-                configs.append(processed)
-        
-        print(f"[OK] Parsed: {url}")
-
+        for line in raw.splitlines():
+            cfg = process_line(line)
+            if cfg:
+                all_configs.append(cfg)
+        print(f"OK: {url} -> {len(all_configs)} configs so far")
     except Exception as e:
-        print(f"[ERROR] {url} -> {e}")
+        print(f"ERROR {url}: {e}")
 
-# Удаляем полные дубликаты
-configs = list(dict.fromkeys(configs))
+all_configs = list(dict.fromkeys(all_configs))  # удалить дубликаты
 
-# Добавляем заголовок с именем подписки (как в рабочем коде)
-with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
-    f.write(HEADER_COMMENT + "\n")
-    f.write("\n".join(configs))
+# Записываем файл
+with open(OUTPUT_FILE, "w") as f:
+    f.write("\n".join(all_configs))
 
-print(f"[DONE] Saved {len(configs)} configs.")
-print(f"[INFO] Total parsed: {total_parsed}")
-print(f"[INFO] Subscription name: {NEW_NAME}")
+print(f"Saved {len(all_configs)} configs to {OUTPUT_FILE}")
+
+# Доп. проверка: прочитаем и выведем первые 3 строки
+with open(OUTPUT_FILE, "r") as f:
+    first_lines = f.readlines()[:3]
+    print("First lines of output file:")
+    for line in first_lines:
+        print(line.strip()[:80])

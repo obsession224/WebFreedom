@@ -1,2 +1,1 @@
-vless://50b95deb-6394-46c5-b88a-583e5b3ca7ee@fastcon-tg.harknmav.fun:443?encryption=none&type=grpc&serviceName=media.playback.v1.SessionGateway&mode=gun&authority=media.playback.v1.SessionGateway&security=tls&sni=fastcon-tg.harknmav.fun&fp=random&alpn=h2#t.me/webfreedomvpn
-vless://50b95deb-6394-46c5-b88a-583e5b3ca7ee@fastcon-tg.harknmav.fun:443?encryption=none&type=grpc&serviceName=%2Fmedia.playback.v1.SessionGateway%2F&mode=gun&authority=fastcon-tg.harknmav.fun&security=tls&sni=fastcon-tg.harknmav.fun&fp=random&alpn=h2#t.me/webfreedomvpn
+vless://50b95deb-6394-46c5-b88a-583e5b3ca7ee@fastcon-tg.harknmav.fun:443?encryption=none&type=grpc&serviceName=media.playback.v1.SessionGateway&mode=gun&security=tls&sni=fastcon-tg.harknmav.fun&fp=random&alpn=h2#t.me/webfreedomvpn

@@ -1,1 +1,1 @@
-vless://50b95deb-6394-46c5-b88a-583e5b3ca7ee@194.55.239.44:443?encryption=none&type=xhttp&path=%2Fvod.content.v2.Delivery%2F&mode=packet-up&security=tls&sni=harknmav.fun&fp=firefox&alpn=h2#t.me/webfreedomvpn
+vless://50b95deb-6394-46c5-b88a-583e5b3ca7ee@194.55.239.44:443?encryption=none&type=xhttp&path=%2Fvod.content.v2.Delivery%2F&mode=packet-up&security=tls&sni=free.harknmav.fun&fp=firefox&alpn=h2#t.me/webfreedomvpn
